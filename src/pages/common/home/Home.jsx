@@ -35,6 +35,11 @@ const Home = () => {
   const { user, loading } = useAuth();
   const [communityMode, setCommunityMode] = useState('realtime'); // realtime | week | month | recommend
   const [accessToken, setAccessToken] = useState('');
+  const [communityTopPosts, setCommunityTopPosts] = useState([]);
+  const [keywordCloud, setKeywordCloud] = useState([]);
+
+  const safeKeywordCloud = Array.isArray(keywordCloud) ? keywordCloud : [];
+  const safeCommunityTopPosts = Array.isArray(communityTopPosts) ? communityTopPosts : [];
 
   useEffect(() => {
     const fetchPopularPosts = async () => {
@@ -99,9 +104,9 @@ const Home = () => {
   // 로딩 중일 때 표시
   if (loading) {
     return (
-      <div className="w-full min-h-screen flex items-center justify-center bg-[#f3f7ff]">
+      <div className="w-full min-h-screen flex items-center justify-center bg-main-01">
         <div className="text-center">
-          <div className="text-lg font-bold text-[#2f80ed] mb-2">고민순삭</div>
+          <div className="text-lg font-bold text-main-02 mb-2">고민순삭</div>
           <p className="text-sm text-gray-600">로딩 중...</p>
         </div>
       </div>
@@ -113,7 +118,7 @@ const Home = () => {
     return (
       <div className="w-full">
         {/* MOBILE */}
-        <div className="lg:hidden w-full max-w-[390px] min-h-screen mx-auto bg-[#f3f7ff] pb-[24px]">
+        <div className="lg:hidden w-full max-w-[390px] min-h-screen mx-auto bg-main-01 pb-[24px]">
           <header className="bg-[#2a5eea] h-16 flex items-center justify-center">
             <div className="flex items-center gap-2 text-white font-bold text-lg">
               <img src={mobileLogo} alt="로고" style={{ width: '60px', height: 'auto' }} />
@@ -140,7 +145,7 @@ const Home = () => {
               {/* 고민 상담 → AI 상담 */}
               <Link
                 to="/chat/withai"
-                className="flex items-center justify-center gap-4 px-4 py-[22px] rounded-[14px] text-white no-underline shadow-[0_8px_16px_rgba(0,0,0,0.08)] bg-gradient-to-r from-[#2ed3c6] to-[#26b8ad]"
+                className="flex items-center justify-center gap-4 px-4 py-[22px] rounded-[14px] text-white no-underline shadow-[0_8px_16px_rgba(0,0,0,0.08)] bg-linear-to-r from-chat to-[#26b8ad]"
               >
                 <div className="w-16 h-16 rounded-full border-2 border-white/70 flex items-center justify-center font-bold text-2xl bg-white/10">
                   <span>💬</span>
@@ -155,7 +160,7 @@ const Home = () => {
               {/* 커리어 상담 → 상담사 찾기 (커리어) */}
               <Link
                 to="/chat/counselor?category=career"
-                className="flex items-center justify-center gap-4 px-4 py-[22px] rounded-[14px] text-white no-underline shadow-[0_8px_16px_rgba(0,0,0,0.08)] bg-gradient-to-r from-[#4f9bff] to-[#2f80ed]"
+                className="flex items-center justify-center gap-4 px-4 py-[22px] rounded-[14px] text-white no-underline shadow-[0_8px_16px_rgba(0,0,0,0.08)] bg-linear-to-r from-[#4f9bff] to-main-02"
               >
                 <div className="w-16 h-16 rounded-full border-2 border-white/70 flex items-center justify-center font-bold text-2xl bg-white/10">
                   <span>💼</span>
@@ -170,7 +175,7 @@ const Home = () => {
               {/* 취업 상담 → 상담사 찾기 (취업) */}
               <Link
                 to="/chat/counselor?category=job"
-                className="flex items-center justify-center gap-4 px-4 py-[22px] rounded-[14px] text-white no-underline shadow-[0_8px_16px_rgba(0,0,0,0.08)] bg-gradient-to-r from-[#2563eb] to-[#1e40af]"
+                className="flex items-center justify-center gap-4 px-4 py-[22px] rounded-[14px] text-white no-underline shadow-[0_8px_16px_rgba(0,0,0,0.08)] bg-linear-to-r from-[#2563eb] to-[#1e40af]"
               >
                 <div className="w-16 h-16 rounded-full border-2 border-white/70 flex items-center justify-center font-bold text-2xl bg-white/10">
                   <span>📝</span>
@@ -186,10 +191,10 @@ const Home = () => {
             <section>
               <h4 className="text-[18px] font-bold mb-3">이번 주 키워드</h4>
               <div className="relative h-[210px] bg-white rounded-[14px] shadow-[0_10px_20px_rgba(31,41,55,0.08)] overflow-hidden">
-                {keywordCloud.map((item) => (
+                {safeKeywordCloud.map((item) => (
                   <span
                     key={item.text}
-                    className={`absolute text-[#2f80ed] font-bold opacity-75 ${item.className}`}
+                    className={`absolute text-main-02 font-bold opacity-75 ${item.className}`}
                     style={item.style}
                   >
                     {item.text}
@@ -240,8 +245,8 @@ const Home = () => {
                 </button>
               </div>
               <ol className="list-none p-0 m-0 flex flex-col gap-2">
-                {communityTopPosts?.map((p, index) => (
-                  <li key={p.bbsId || p.bbs_id} className="flex items-center gap-2.5 text-[13px] text-[#1f2937]">
+                {safeCommunityTopPosts.map((p, index) => (
+                  <li key={p.bbsId || p.bbs_id} className="flex items-center gap-2.5 text-[13px] text-deep">
                     <span className="font-bold text-[#4b5563] w-[26px]">{String(index + 1).padStart(2, '0')}</span>
                     <Link to={`/board/view/${p.bbsId || p.bbs_id}`} className="truncate">
                       {p.title}
@@ -254,20 +259,18 @@ const Home = () => {
         </div>
 
         {/* DESKTOP */}
-        <div className="hidden lg:block w-full bg-[#f3f7ff] min-h-screen">
+        <div className="hidden lg:block w-full bg-main-01 min-h-screen">
           <div className="max-w-[1520px] mx-auto px-6 py-8">
             {/* HERO */}
             <section
               className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen h-[380px] text-white p-8 flex items-center justify-center text-center shadow-[0_8px_24px_rgba(0,0,0,0.12)] bg-cover bg-center mb-8"
-              className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen h-[380px] text-white p-8 flex items-center justify-center text-center shadow-[0_8px_24px_rgba(0,0,0,0.12)] bg-cover bg-center mb-8"
               style={{
                 backgroundImage:
-                  "linear-gradient(0deg, rgba(0,0,0,0.75)), url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80')",
                   "linear-gradient(0deg, rgba(0,0,0,0.75)), url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80')",
               }}
             >
               <div>
-                <p className="!text-5xl leading-[1.5] !font-semibold mb-5">
+                <p className="text-5xl! leading-normal font-semibold! mb-5">
                   우리를 망치는 것은 다른 사람들의 눈을 지나치게 의식하는 것이다.
                 </p>
                 <span className="block text-[13px] font-normal opacity-90">벤자민 프랭클린 | 명언/명대사</span>
@@ -276,7 +279,7 @@ const Home = () => {
 
             {/* QUICK TEST */}
             <section className="my-10">
-              <h3 className="!text-4xl !font-semibold text-[#111827] mb-8">내 취업 간단 테스트</h3>
+              <h3 className="text-4xl! font-semibold! text-[#111827] mb-8">내 취업 간단 테스트</h3>
               <div className="grid grid-cols-3 gap-4">
                 {[
                   {
@@ -294,15 +297,15 @@ const Home = () => {
                 ].map((t) => (
                   <div
                     key={t.title}
-                    className="bg-white rounded-[16px] border-2 border-[#e5e7eb] p-5 hover:border-[#2f80ed] hover:shadow-md transition-all cursor-pointer"
+                    className="bg-white rounded-[16px] border-2 border-[#e5e7eb] p-5 hover:border-main-02 hover:shadow-md transition-all cursor-pointer"
                   >
                     <div className="flex items-start justify-between mb-3">
                       <span className="inline-block bg-[#e0f2fe] text-[#0284c7] text-[11px] font-semibold px-3 py-1 rounded-full">
                         테스트
                       </span>
                     </div>
-                    <p className="!text-2xl !font-medium text-[#111827] mb-2">{t.title}</p>
-                    <p className="!text-xl text-[#6b7280] leading-relaxed">{t.desc}</p>
+                    <p className="text-2xl! font-medium! text-[#111827] mb-2">{t.title}</p>
+                    <p className="text-xl! text-[#6b7280] leading-relaxed">{t.desc}</p>
                   </div>
                 ))}
               </div>
@@ -311,22 +314,18 @@ const Home = () => {
             {/* MAIN CTA */}
             {/* TODO: DB 연동 시 각 버튼의 링크를 실제 상담 서비스로 연결 */}
             <section className="my-10">
-              <h3 className="!text-4xl !font-semibold text-[#111827] mb-8">지금 나에게 필요한 상담은 무엇인가요?</h3>
+              <h3 className="text-4xl! font-semibold! text-[#111827] mb-8">지금 나에게 필요한 상담은 무엇인가요?</h3>
               <div className="grid grid-cols-3 gap-5">
                 {/* 고민 상담 → AI 상담 */}
                 <Link
                   to="/chat/withai"
-                  className="bg-gradient-to-br from-[#2ed3c6] to-[#26b8ad] rounded-[20px] p-8 text-white shadow-[0_8px_24px_rgba(46,211,198,0.25)] hover:shadow-[0_12px_32px_rgba(46,211,198,0.35)] hover:scale-[1.02] transition-all duration-300 flex flex-col items-center justify-center text-center min-h-[200px]"
+                  className="bg-linear-to-br from-chat to-[#26b8ad] rounded-[20px] p-8 text-white shadow-[0_8px_24px_rgba(46,211,198,0.25)] hover:shadow-[0_12px_32px_rgba(46,211,198,0.35)] hover:scale-[1.02] transition-all duration-300 flex flex-col items-center justify-center text-center min-h-[200px]"
                 >
                   <div className="w-32 h-32 rounded-full bg-white/20 flex items-center justify-center text-[52px] mb-4">
                     <img src={nomal_cnsl} alt="고민 상담" />
-                  <div className="w-32 h-32 rounded-full bg-white/20 flex items-center justify-center text-[52px] mb-4">
-                    <img src={nomal_cnsl} alt="고민 상담" />
                   </div>
-                  <p className="!text-2xl !font-semibold mb-2">고민 상담</p>
-                  <p className="!text-xl opacity-95 leading-relaxed">
-                  <p className="!text-2xl !font-semibold mb-2">고민 상담</p>
-                  <p className="!text-xl opacity-95 leading-relaxed">
+                  <p className="text-2xl! font-semibold! mb-2">고민 상담</p>
+                  <p className="text-xl! opacity-95 leading-relaxed">
                     혼자서 풀지 못하던 고민,
                     <br />
                     지금 마음부터 가볍게 정리해보세요.
@@ -336,17 +335,13 @@ const Home = () => {
                 {/* 커리어 상담 → 상담사 찾기 (커리어) */}
                 <Link
                   to="/chat/counselor?category=career"
-                  className="bg-gradient-to-br from-[#4f9bff] to-[#2f80ed] rounded-[20px] p-8 text-white shadow-[0_8px_24px_rgba(47,128,237,0.25)] hover:shadow-[0_12px_32px_rgba(47,128,237,0.35)] hover:scale-[1.02] transition-all duration-300 flex flex-col items-center justify-center text-center min-h-[200px]"
+                  className="bg-linear-to-br from-[#4f9bff] to-main-02 rounded-[20px] p-8 text-white shadow-[0_8px_24px_rgba(47,128,237,0.25)] hover:shadow-[0_12px_32px_rgba(47,128,237,0.35)] hover:scale-[1.02] transition-all duration-300 flex flex-col items-center justify-center text-center min-h-[200px]"
                 >
                   <div className="w-32 h-32 rounded-full bg-white/20 flex items-center justify-center text-[52px] mb-4">
                     <img src={career_cnsl} alt="커리어 상담" />
-                  <div className="w-32 h-32 rounded-full bg-white/20 flex items-center justify-center text-[52px] mb-4">
-                    <img src={career_cnsl} alt="커리어 상담" />
                   </div>
-                  <p className="!text-2xl !font-semibold mb-2">커리어 상담</p>
-                  <p className="!text-xl opacity-95 leading-relaxed">
-                  <p className="!text-2xl !font-semibold mb-2">커리어 상담</p>
-                  <p className="!text-xl opacity-95 leading-relaxed">
+                  <p className="text-2xl! font-semibold! mb-2">커리어 상담</p>
+                  <p className="text-xl! opacity-95 leading-relaxed">
                     지금의 선택이 맞는지,
                     <br />
                     커리어 방향을 함께 점검해드려요.
@@ -356,17 +351,13 @@ const Home = () => {
                 {/* 취업 상담 → 상담사 찾기 (취업) */}
                 <Link
                   to="/chat/counselor?category=job"
-                  className="bg-gradient-to-br from-[#2563eb] to-[#1e40af] rounded-[20px] p-8 text-white shadow-[0_8px_24px_rgba(37,99,235,0.25)] hover:shadow-[0_12px_32px_rgba(37,99,235,0.35)] hover:scale-[1.02] transition-all duration-300 flex flex-col items-center justify-center text-center min-h-[200px]"
+                  className="bg-linear-to-br from-[#2563eb] to-[#1e40af] rounded-[20px] p-8 text-white shadow-[0_8px_24px_rgba(37,99,235,0.25)] hover:shadow-[0_12px_32px_rgba(37,99,235,0.35)] hover:scale-[1.02] transition-all duration-300 flex flex-col items-center justify-center text-center min-h-[200px]"
                 >
                   <div className="w-32 h-32 rounded-full bg-white/20 flex items-center justify-center text-[52px] mb-4">
                     <img src={employment_cnsl} alt="취업 상담" />
-                  <div className="w-32 h-32 rounded-full bg-white/20 flex items-center justify-center text-[52px] mb-4">
-                    <img src={employment_cnsl} alt="취업 상담" />
                   </div>
-                  <p className="!text-2xl !font-semibold mb-2">취업 상담</p>
-                  <p className="!text-xl opacity-95 leading-relaxed">
-                  <p className="!text-2xl !font-semibold mb-2">취업 상담</p>
-                  <p className="!text-xl opacity-95 leading-relaxed">
+                  <p className="text-2xl! font-semibold! mb-2">취업 상담</p>
+                  <p className="text-xl! opacity-95 leading-relaxed">
                     이력서부터 면접까지,
                     <br />
                     합격에 필요한 전략을 전해드립니다.
@@ -377,18 +368,18 @@ const Home = () => {
 
             {/* KEYWORDS */}
             <section className="mb-8">
-              <h3 className="!text-4xl !font-bold text-[#111827] mb-4">이번 주 키워드</h3>
+              <h3 className="text-4xl! font-bold! text-[#111827] mb-4">이번 주 키워드</h3>
               <div className="grid grid-cols-2 gap-5">
                 <div className="relative bg-white rounded-[20px] shadow-[0_4px_16px_rgba(31,41,55,0.06)] overflow-hidden p-6 h-full min-h-[320px]">
                   <img src="http://localhost:8000/weekly-wordcloud" className="mt-4" />
                 </div>
                 <div className="bg-white rounded-[20px] shadow-[0_4px_16px_rgba(31,41,55,0.06)] p-5">
                   <div className="flex items-center justify-between mb-4">
-                    <p className="!text-3xl !font-semibold text-[#111827]">상위 키워드 TOP 10</p>
-                    <p className="!text-base text-[#6b7280]">이번 주</p>
+                    <p className="text-3xl! font-semibold! text-[#111827]">상위 키워드 TOP 10</p>
+                    <p className="text-base! text-[#6b7280]">이번 주</p>
                   </div>
                   <ol className="space-y-2.5">
-                    {[...keywordCloud]
+                    {[...safeKeywordCloud]
                       .map((k) => k.text)
                       .slice(0, 9)
                       .concat(['포트폴리오'])
@@ -415,7 +406,7 @@ const Home = () => {
                   <Link
                     to="/board"
                     state={{ activeTab: '공지사항' }}
-                    className="text-[12px] text-[#6b7280] hover:text-[#2f80ed]"
+                    className="text-[12px] text-[#6b7280] hover:text-main-02"
                   >
                     더보기 &gt;
                   </Link>
@@ -425,9 +416,9 @@ const Home = () => {
                     <Link
                       key={notice.id}
                       to={`/board/view/${notice.id}`}
-                      className="block border border-[#e5e7eb] rounded-[14px] overflow-hidden hover:shadow-md hover:border-[#2f80ed] transition-all"
+                      className="block border border-[#e5e7eb] rounded-[14px] overflow-hidden hover:shadow-md bg-linear-to-br from-[#f0f9ff] to-[#e0f2fe] transition-all"
                     >
-                      <div className="h-[100px] bg-gradient-to-br from-[#f0f9ff] to-[#e0f2fe] flex items-center justify-center">
+                      <div className="h-[100px] flex items-center justify-center">
                         <img
                           src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=400&q=80"
                           alt={notice.title}
@@ -452,7 +443,7 @@ const Home = () => {
                   <Link
                     to="/board"
                     state={{ activeTab: '인기글' }}
-                    className="text-[12px] text-[#6b7280] hover:text-[#2f80ed]"
+                    className="text-[12px] text-[#6b7280] hover:text-main-02"
                   >
                     전체 보기 &gt;
                   </Link>
@@ -488,14 +479,14 @@ const Home = () => {
                   </button>
                 </div>
                 <ol className="list-none p-0 m-0 flex flex-col gap-2.5">
-                  {communityTopPosts.map((p, index) => (
-                    <li key={p.bbsId || p.bbs_id} className="flex items-center gap-3 text-[13px] text-[#1f2937]">
+                  {safeCommunityTopPosts.map((p, index) => (
+                    <li key={p.bbsId || p.bbs_id} className="flex items-center gap-3 text-[13px] text-deep">
                       <span className="font-bold text-[#4b5563] w-[28px] text-center">
                         {String(index + 1).padStart(2, '0')}
                       </span>
                       <Link
                         to={`/board/view/${p.id}`}
-                        className="flex-1 truncate hover:text-[#2f80ed] font-medium transition-colors"
+                        className="flex-1 truncate hover:text-main-02 font-medium transition-colors"
                       >
                         {p.title}
                       </Link>

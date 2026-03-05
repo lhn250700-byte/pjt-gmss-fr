@@ -549,7 +549,7 @@ const CounselorChat = () => {
 
   if (loading) {
     return (
-      <div className="w-full min-h-screen flex items-center justify-center bg-[#f3f7ff]">
+      <div className="w-full min-h-screen flex items-center justify-center bg-main-01">
         <p className="text-gray-600">로딩 중...</p>
             </div>
     );
@@ -557,9 +557,9 @@ const CounselorChat = () => {
 
   if (errorMsg) {
     return (
-      <div className="w-full min-h-screen flex flex-col items-center justify-center bg-[#f3f7ff] gap-4">
+      <div className="w-full min-h-screen flex flex-col items-center justify-center bg-main-01 gap-4">
         <p className="text-gray-800">{errorMsg}</p>
-        <Link to="/chat/counselor" className="text-[#2f80ed] font-semibold hover:underline">
+        <Link to="/chat/counselor" className="text-main-02 font-semibold hover:underline">
           상담 목록으로
             </Link>
           </div>
@@ -569,8 +569,8 @@ const CounselorChat = () => {
   return (
     <>
       {/* MOBILE */}
-      <div className="lg:hidden w-full max-w-[390px] h-screen max-h-[100dvh] mx-auto bg-white flex flex-col overflow-hidden">
-        <header className="bg-[#2f80ed] h-16 flex items-center justify-between px-4 text-white font-bold text-lg">
+      <div className="lg:hidden w-full max-w-[390px] h-screen max-h-dvh mx-auto bg-white flex flex-col overflow-hidden">
+        <header className="bg-main-02 h-16 flex items-center justify-between px-4 text-white font-bold text-lg">
           <span>{peer.nickname} 상담</span>
           <div className="flex gap-2">
             {me?.role === 'SYSTEM' && isBeforeStart && (
@@ -647,7 +647,7 @@ const CounselorChat = () => {
                 disabled={isInputDisabled}
                 className={`flex-1 h-9 rounded-[10px] border border-[#dbe3f1] px-2 text-xs ${isInputDisabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}`}
               />
-              <button type="submit" disabled={isInputDisabled} className="h-9 px-3 rounded-[10px] bg-[#2f80ed] text-white text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed">
+              <button type="submit" disabled={isInputDisabled} className="h-9 px-3 rounded-[10px] bg-main-02 text-white text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed">
               전송
             </button>
             </form>
@@ -656,9 +656,9 @@ const CounselorChat = () => {
       </div>
 
       {/* PC: 좌측 정보 패널(채팅창 높이 맞춤), 우측 채팅 영역 */}
-      <div className="hidden lg:flex w-full h-screen max-h-[100dvh] bg-[#f3f7ff] overflow-hidden">
+      <div className="hidden lg:flex w-full h-screen max-h-dvh bg-main-01 overflow-hidden">
         <div className="w-full max-w-[1520px] mx-auto flex flex-col px-4 py-4 min-h-0 overflow-hidden">
-          <header className="shrink-0 bg-gradient-to-r from-[#2f80ed] to-[#1d4ed8] h-20 flex items-center justify-between text-white font-bold text-2xl shadow-lg rounded-t-2xl px-8">
+          <header className="shrink-0 bg-linear-to-r from-main-02 to-[#1d4ed8] h-20 flex items-center justify-between text-white font-bold text-2xl shadow-lg rounded-t-2xl px-8">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center text-3xl font-bold">
                 {peer.nickname?.slice(0, 1) || '상'}
@@ -708,24 +708,6 @@ const CounselorChat = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
-                <h3 className="text-lg font-semibold text-gray-800 px-4 py-2 shrink-0">{infoLabel}</h3>
-                <div className="flex-1 min-h-0 overflow-y-auto px-4 py-3 text-sm text-[#374151]">
-                  {infoToShow && (
-                    <>
-                      <p className="font-medium text-gray-800">{infoToShow.nickname || infoToShow.email}</p>
-                      {infoToShow.mbti && <p className="text-[#6b7280] mt-1">MBTI: {infoToShow.mbti}</p>}
-                      {(infoToShow.persona || infoToShow.profile) && (
-                        <p className="mt-2 leading-relaxed whitespace-pre-line">
-                          {infoToShow.persona || infoToShow.profile}
-                        </p>
-                      )}
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-
             {/* 우측 채팅 영역 */}
             <div className="flex-1 min-w-0 min-h-0 flex flex-col rounded-2xl border border-[#e5e7eb] bg-white shadow-lg overflow-hidden">
               <h3 className="text-xl font-semibold text-gray-800 px-6 py-4 border-b border-[#e5e7eb] shrink-0">채팅</h3>
@@ -764,17 +746,17 @@ const CounselorChat = () => {
                 )}
                 </div>
               <form onSubmit={handleChatSubmit} className="flex gap-3 p-4 border-t border-[#e5e7eb] shrink-0">
-                  <input
-                    type="text"
+                <input
+                  type="text"
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   placeholder={isInputDisabled ? '상담 시작 후 메시지를 입력할 수 있습니다.' : '메시지를 입력하세요'}
                   disabled={isInputDisabled}
-                  className={`flex-1 h-12 rounded-xl border border-[#dbe3f1] px-4 text-sm focus:outline-none focus:border-[#2f80ed] ${isInputDisabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}`}
+                  className={`flex-1 h-12 rounded-xl border border-[#dbe3f1] px-4 text-sm focus:outline-none focus:border-main-02 ${isInputDisabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}`}
                 />
-                <button type="submit" disabled={isInputDisabled} className="h-12 px-6 rounded-xl bg-[#2f80ed] text-white text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed">
-                    전송
-                  </button>
+                <button type="submit" disabled={isInputDisabled} className="h-12 px-6 rounded-xl bg-main-02 text-white text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed">
+                  전송
+                </button>
               </form>
             </div>
           </main>
