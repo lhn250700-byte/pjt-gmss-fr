@@ -527,7 +527,7 @@ const Home = () => {
               {/* 커뮤니티 인기글 */}
               <div className="bg-white rounded-[20px] shadow-[0_4px_16px_rgba(31,41,55,0.06)] p-5">
                 <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-[18px] font-bold text-[#111827]">
+                  <h4 className="!text-[18px] font-bold text-[#111827]">
                     커뮤니티 인기글
                   </h4>
                   <Link
