@@ -33,10 +33,8 @@ const scoreRecommend = (p) => p.likes * 3 + p.comments * 5 + p.views * 0.1;
 
 const Home = () => {
   const { user, loading } = useAuth();
-  const { email, accessToken } = useAuthStore();
   const [communityMode, setCommunityMode] = useState('realtime'); // realtime | week | month | recommend
-  const [communityTopPosts, setCommunityTopPosts] = useState([]);
-  const [keywordCloud, setKeywordCloud] = useState([]);
+  const [accessToken, setAccessToken] = useState('');
 
   useEffect(() => {
     const fetchPopularPosts = async () => {
@@ -110,7 +108,7 @@ const Home = () => {
     );
   }
 
-  if (user.role === 'ADMIN') return null;
+  if (user.role === 'ADMIN') return <DashBoard />;
   else if (user.role === 'USER')
     return (
       <div className="w-full">
@@ -190,7 +188,7 @@ const Home = () => {
               <div className="relative h-[210px] bg-white rounded-[14px] shadow-[0_10px_20px_rgba(31,41,55,0.08)] overflow-hidden">
                 {keywordCloud.map((item) => (
                   <span
-                    key={item.keyword}
+                    key={item.text}
                     className={`absolute text-[#2f80ed] font-bold opacity-75 ${item.className}`}
                     style={item.style}
                   >
@@ -261,8 +259,10 @@ const Home = () => {
             {/* HERO */}
             <section
               className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen h-[380px] text-white p-8 flex items-center justify-center text-center shadow-[0_8px_24px_rgba(0,0,0,0.12)] bg-cover bg-center mb-8"
+              className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen h-[380px] text-white p-8 flex items-center justify-center text-center shadow-[0_8px_24px_rgba(0,0,0,0.12)] bg-cover bg-center mb-8"
               style={{
                 backgroundImage:
+                  "linear-gradient(0deg, rgba(0,0,0,0.75)), url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80')",
                   "linear-gradient(0deg, rgba(0,0,0,0.75)), url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80')",
               }}
             >
@@ -320,7 +320,11 @@ const Home = () => {
                 >
                   <div className="w-32 h-32 rounded-full bg-white/20 flex items-center justify-center text-[52px] mb-4">
                     <img src={nomal_cnsl} alt="고민 상담" />
+                  <div className="w-32 h-32 rounded-full bg-white/20 flex items-center justify-center text-[52px] mb-4">
+                    <img src={nomal_cnsl} alt="고민 상담" />
                   </div>
+                  <p className="!text-2xl !font-semibold mb-2">고민 상담</p>
+                  <p className="!text-xl opacity-95 leading-relaxed">
                   <p className="!text-2xl !font-semibold mb-2">고민 상담</p>
                   <p className="!text-xl opacity-95 leading-relaxed">
                     혼자서 풀지 못하던 고민,
@@ -336,7 +340,11 @@ const Home = () => {
                 >
                   <div className="w-32 h-32 rounded-full bg-white/20 flex items-center justify-center text-[52px] mb-4">
                     <img src={career_cnsl} alt="커리어 상담" />
+                  <div className="w-32 h-32 rounded-full bg-white/20 flex items-center justify-center text-[52px] mb-4">
+                    <img src={career_cnsl} alt="커리어 상담" />
                   </div>
+                  <p className="!text-2xl !font-semibold mb-2">커리어 상담</p>
+                  <p className="!text-xl opacity-95 leading-relaxed">
                   <p className="!text-2xl !font-semibold mb-2">커리어 상담</p>
                   <p className="!text-xl opacity-95 leading-relaxed">
                     지금의 선택이 맞는지,
@@ -352,7 +360,11 @@ const Home = () => {
                 >
                   <div className="w-32 h-32 rounded-full bg-white/20 flex items-center justify-center text-[52px] mb-4">
                     <img src={employment_cnsl} alt="취업 상담" />
+                  <div className="w-32 h-32 rounded-full bg-white/20 flex items-center justify-center text-[52px] mb-4">
+                    <img src={employment_cnsl} alt="취업 상담" />
                   </div>
+                  <p className="!text-2xl !font-semibold mb-2">취업 상담</p>
+                  <p className="!text-xl opacity-95 leading-relaxed">
                   <p className="!text-2xl !font-semibold mb-2">취업 상담</p>
                   <p className="!text-xl opacity-95 leading-relaxed">
                     이력서부터 면접까지,
@@ -377,7 +389,7 @@ const Home = () => {
                   </div>
                   <ol className="space-y-2.5">
                     {[...keywordCloud]
-                      .map((k) => k.keyword)
+                      .map((k) => k.text)
                       .slice(0, 9)
                       .concat(['포트폴리오'])
                       .slice(0, 10)
@@ -482,7 +494,7 @@ const Home = () => {
                         {String(index + 1).padStart(2, '0')}
                       </span>
                       <Link
-                        to={`/board/view/${p.bbsId || p.bbs_id}`}
+                        to={`/board/view/${p.id}`}
                         className="flex-1 truncate hover:text-[#2f80ed] font-medium transition-colors"
                       >
                         {p.title}

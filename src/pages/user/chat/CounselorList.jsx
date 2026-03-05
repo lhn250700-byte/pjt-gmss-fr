@@ -1,8 +1,53 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { getCounselorList } from '../../../api/cnslApi';
+import counselors from './counselorData';
 
-const ITEMS_PER_PAGE = 10;
+// TODO: DB 연동 가이드
+// 이 페이지는 상담사 목록을 표시하고 다양한 필터 옵션을 제공합니다
+//
+// DB 연동 시 필요한 작업:
+// 1. 상담사 목록 조회
+//    - API: GET /api/counselors?filters={JSON.stringify(filters)}&page={page}&pageSize={pageSize}
+//    - 요청 파라미터:
+//      * filters: {
+//          category: string[],      // ['job', 'career', 'psychology']
+//          method: string[],        // ['chat', 'call', 'visit']
+//          priceRange: string[]     // ['10000-20000', '20000-30000', ...]
+//        }
+//      * page: 페이지 번호 (1부터 시작)
+//      * pageSize: 페이지당 항목 수 (기본 7개)
+//    - 응답:
+//      {
+//        counselors: [
+//          {
+//            id: string,
+//            name: string,
+//            title: string,
+//            summary: string,
+//            tags: string[],
+//            reviewCount: number,
+//            rating: number,
+//            prices: { chat: number, call: number, visit: number },
+//            available: boolean,
+//            sessions: number        // 누적 상담 횟수
+//          }
+//        ],
+//        totalCount: number,
+//        totalPages: number
+//      }
+//
+// 2. 상담사 상세 정보 조회 (클릭 시)
+//    - API: GET /api/counselors/:id
+//
+// 3. 실시간 예약 가능 여부
+//    - WebSocket 또는 폴링으로 실시간 업데이트
+//    - available 필드로 예약 가능 여부 표시
+//
+// 4. 필터링 로직
+//    - 서버 측에서 필터링 처리 권장 (성능)
+//    - 클라이언트에서는 선택된 필터를 API 파라미터로 전달
+
+const ITEMS_PER_PAGE = 7;
 
 const CounselorList = () => {
   const [searchParams] = useSearchParams();
@@ -12,40 +57,6 @@ const CounselorList = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedMethods, setSelectedMethods] = useState([]);
   const [selectedPriceRanges, setSelectedPriceRanges] = useState([]);
-  // 별점 렌더링 함수
-  const renderStars = (rating) => {
-    const stars = [];
-    const fullStars = Math.floor(rating); // 꽉 찬 별 개수
-    const hasHalfStar = rating % 1 >= 0.5; // 반 별 여부
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0); // 빈 별 개수
-
-    // 꽉 찬 별
-    for (let i = 0; i < fullStars; i++) {
-      stars.push(
-        <span key={`full-${i}`} className="material-icons">
-          star
-        </span>,
-      );
-    }
-    // 반 별
-    if (hasHalfStar) {
-      stars.push(
-        <span key="half" className="material-icons">
-          star_half
-        </span>,
-      );
-    }
-    // 빈 별
-    for (let i = 0; i < emptyStars; i++) {
-      stars.push(
-        <span key={`empty-${i}`} className="material-icons">
-          star_outline
-        </span>,
-      );
-    }
-
-    return stars;
-  };
 
   // URL 파라미터에서 초기 category 설정
   useEffect(() => {
@@ -56,37 +67,32 @@ const CounselorList = () => {
   }, [searchParams]);
 
   // TODO: DB 연동 시 counselors를 API 호출 결과로 대체
-  const [counselors, setCounselors] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [totalPages, setTotalPages] = useState(0);
-
-  useEffect(() => {
-    const fetchCounselors = async () => {
-      try {
-        setLoading(true);
-        const filters = {
-          category: selectedCategories,
-          method: selectedMethods,
-          priceRange: selectedPriceRanges,
-        };
-
-        const data = await getCounselorList({
-          page: 0,
-          size: ITEMS_PER_PAGE,
-        });
-
-        console.log(data);
-
-        setCounselors(data?.content);
-        setTotalPages(data?.totalPages);
-      } catch (error) {
-        console.error('상담사 목록 조회 실패:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCounselors();
-  }, [selectedCategories, selectedMethods, selectedPriceRanges, page]);
+  // const [counselors, setCounselors] = useState([]);
+  // const [loading, setLoading] = useState(true);
+  //
+  // useEffect(() => {
+  //   const fetchCounselors = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const filters = {
+  //         category: selectedCategories,
+  //         method: selectedMethods,
+  //         priceRange: selectedPriceRanges
+  //       };
+  //       const response = await fetch(
+  //         `/api/counselors?filters=${JSON.stringify(filters)}&page=${page}&pageSize=${ITEMS_PER_PAGE}`
+  //       );
+  //       const data = await response.json();
+  //       setCounselors(data.counselors);
+  //       setTotalPages(data.totalPages);
+  //     } catch (error) {
+  //       console.error('상담사 목록 조회 실패:', error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchCounselors();
+  // }, [selectedCategories, selectedMethods, selectedPriceRanges, page]);
 
   const categoryToTag = useMemo(
     () => ({
@@ -95,7 +101,7 @@ const CounselorList = () => {
       career: '커리어',
       love: '연애',
     }),
-    [],
+    []
   );
 
   // 필터 토글 함수들
@@ -123,7 +129,7 @@ const CounselorList = () => {
     if (selectedCategories.length > 0) {
       result = result.filter((item) => {
         const tags = selectedCategories.map((cat) => categoryToTag[cat]);
-        return tags.some((tag) => item?.tags?.includes(tag));
+        return tags.some((tag) => item.tags?.includes(tag));
       });
     }
 
@@ -131,9 +137,9 @@ const CounselorList = () => {
     if (selectedMethods.length > 0) {
       result = result.filter((item) => {
         return selectedMethods.every((method) => {
-          if (method === 'chat') return item?.prices.chat > 0;
-          if (method === 'call') return item?.prices.call > 0;
-          if (method === 'visit') return item?.prices.visit > 0;
+          if (method === 'chat') return item.prices.chat > 0;
+          if (method === 'call') return item.prices.call > 0;
+          if (method === 'visit') return item.prices.visit > 0;
           return false;
         });
       });
@@ -142,7 +148,7 @@ const CounselorList = () => {
     // 가격 범위 필터
     if (selectedPriceRanges.length > 0) {
       result = result.filter((item) => {
-        const minPrice = Math.min(item?.prices.chat, item?.prices.call, item?.prices.visit);
+        const minPrice = Math.min(item.prices.chat, item.prices.call, item.prices.visit);
         return selectedPriceRanges.some((range) => {
           const [min, max] = range.split('-').map(Number);
           if (max) {
@@ -157,7 +163,13 @@ const CounselorList = () => {
     return result;
   }, [selectedCategories, selectedMethods, selectedPriceRanges, categoryToTag]);
 
+  const totalPages = Math.max(1, Math.ceil(filteredCounselors.length / ITEMS_PER_PAGE));
   const safePage = Math.min(page, totalPages);
+
+  const currentItems = useMemo(() => {
+    const start = (safePage - 1) * ITEMS_PER_PAGE;
+    return filteredCounselors.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredCounselors, safePage]);
 
   // 체크박스 스타일 헬퍼
   const checkboxClass = (isChecked) =>
@@ -179,7 +191,7 @@ const CounselorList = () => {
           {/* 필터 섹션 */}
           <div className="bg-white rounded-[14px] p-4 shadow-[0_8px_16px_rgba(0,0,0,0.06)]">
             {/* 상담 유형 */}
-            {/* <div className="mb-4">
+            <div className="mb-4">
               <label className="block text-[13px] font-semibold text-[#374151] mb-2">상담 유형</label>
               <div className="flex flex-wrap gap-2">
                 {[
@@ -201,10 +213,10 @@ const CounselorList = () => {
                   </button>
                 ))}
               </div>
-            </div> */}
+            </div>
 
             {/* 상담 방식 */}
-            {/* <div className="mb-4">
+            <div className="mb-4">
               <label className="block text-[13px] font-semibold text-[#374151] mb-2">상담 방식</label>
               <div className="flex flex-wrap gap-2">
                 {[
@@ -226,10 +238,10 @@ const CounselorList = () => {
                   </button>
                 ))}
               </div>
-            </div> */}
+            </div>
 
             {/* 상담 가격 */}
-            {/* <div>
+            <div>
               <label className="block text-[13px] font-semibold text-[#374151] mb-2">상담 가격</label>
               <div className="flex flex-wrap gap-2">
                 {[
@@ -253,48 +265,48 @@ const CounselorList = () => {
                   </button>
                 ))}
               </div>
-            </div> */}
+            </div>
           </div>
 
           <section className="flex flex-col gap-3">
-            {counselors.length === 0 ? (
+            {currentItems.length === 0 ? (
               <div className="text-[13px] text-[#6b7280] text-center py-10">
                 선택한 분야에 해당하는 상담사가 없습니다.
               </div>
             ) : (
-              counselors?.map((item) => (
+              currentItems.map((item) => (
                 <Link
-                  key={item?.memberId}
-                  to={`/chat/counselor/${item?.memberId}`}
+                  key={item.id}
+                  to={`/chat/counselor/${item.id}`}
                   className="bg-white rounded-[14px] p-4 shadow-[0_8px_16px_rgba(0,0,0,0.06)] flex gap-3 no-underline"
                 >
                   <div className="w-[68px] h-[68px] rounded-full bg-[#e9efff] flex items-center justify-center text-[#2f80ed] font-bold text-[16px]">
-                    {item?.nickname.slice(0, 1)}
+                    {item.name.slice(0, 1)}
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-[15px] font-bold text-[#111827]">
-                        {item?.nickname} {item?.title || 'test'}
+                        {item.name} {item.title}
                       </span>
                     </div>
                     <div className="flex items-center gap-1 text-[12px] text-[#f59e0b] mb-1">
-                      <div className="flex flex-row text-point items-center">{renderStars(item?.avgEvalPt || 0)}</div>
-                      <span className="text-[#6b7280]">({item?.cnslCnt})</span>
+                      <span>★★★★★</span>
+                      <span className="text-[#6b7280]">({item.reviewCount})</span>
                     </div>
-                    {/* <p className="text-[12px] text-[#6b7280] mb-2">{item?.tags?.map((tag) => `#${tag}`).join(' ')}</p> */}
-                    <p className="text-[12px] text-[#374151]">{item?.text}</p>
+                    <p className="text-[12px] text-[#6b7280] mb-2">{item.tags.map((tag) => `#${tag}`).join(' ')}</p>
+                    <p className="text-[12px] text-[#374151]">{item.summary}</p>
                     <div className="mt-3 grid grid-cols-3 text-[12px] text-[#111827]">
                       <div className="flex items-center gap-1">
                         <span className="w-2 h-2 rounded-full bg-[#22c55e]" />
-                        {item?.cnsl4Price?.toLocaleString()}원
+                        {item.prices.chat.toLocaleString()}원
                       </div>
                       <div className="flex items-center gap-1">
                         <span className="w-2 h-2 rounded-full bg-[#60a5fa]" />
-                        {item?.cnsl2Price?.toLocaleString()}원
+                        {item.prices.call.toLocaleString()}원
                       </div>
                       <div className="flex items-center gap-1">
                         <span className="w-2 h-2 rounded-full bg-[#fb923c]" />
-                        {item?.cnsl1Price?.toLocaleString()}원
+                        {item.prices.visit.toLocaleString()}원
                       </div>
                     </div>
                   </div>
@@ -435,49 +447,47 @@ const CounselorList = () => {
             <div>
               {/* 상담사 목록 */}
               <section className="flex flex-col gap-6">
-                {counselors.length === 0 ? (
+                {currentItems.length === 0 ? (
                   <div className="text-lg text-gray-600 text-center py-20 bg-white rounded-2xl shadow-sm">
                     선택한 필터에 해당하는 상담사가 없습니다.
                   </div>
                 ) : (
-                  counselors?.map((item) => (
+                  currentItems.map((item) => (
                     <Link
-                      key={item?.memberId}
-                      to={`/chat/counselor/${item?.memberId}`}
+                      key={item.id}
+                      to={`/chat/counselor/${item.id}`}
                       className="bg-white rounded-2xl p-8 shadow-sm flex gap-8 no-underline hover:shadow-md transition-all group"
                     >
                       <div className="w-[140px] h-[140px] rounded-full bg-gradient-to-br from-[#e9efff] to-[#d1e0ff] flex items-center justify-center text-[#2f80ed] font-bold text-4xl shadow-lg group-hover:scale-105 transition-transform">
-                        {item?.nickname.slice(0, 1)}
+                        {item.name.slice(0, 1)}
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-3">
                           <span className="text-2xl font-bold text-gray-800">
-                            {item?.nickname} {item?.title || 'test'}
+                            {item.name} {item.title}
                           </span>
                         </div>
                         <div className="flex items-center gap-2 text-lg text-[#f59e0b] mb-3">
-                          <div className="flex flex-row text-point items-center">
-                            {renderStars(item?.avgEvalPt || 0)}
-                          </div>
-                          <span className="text-gray-600">({item?.cnslCnt})</span>
+                          <span>★★★★★</span>
+                          <span className="text-gray-600">({item.reviewCount})</span>
                         </div>
-                        {/* <p className="text-base text-gray-600 mb-4">{item?.tags.map((tag) => `#${tag}`).join(' ')}</p> */}
-                        <p className="text-base text-gray-700 mb-6 leading-relaxed">{item?.text}</p>
+                        <p className="text-base text-gray-600 mb-4">{item.tags.map((tag) => `#${tag}`).join(' ')}</p>
+                        <p className="text-base text-gray-700 mb-6 leading-relaxed">{item.summary}</p>
                         <div className="grid grid-cols-3 gap-6 text-base text-gray-800">
                           <div className="flex items-center gap-2 bg-green-50 px-4 py-3 rounded-lg">
                             <span className="w-3 h-3 rounded-full bg-[#22c55e]" />
                             <span className="font-semibold">채팅</span>
-                            <span className="ml-auto">{item?.cnsl4Price?.toLocaleString()}원</span>
+                            <span className="ml-auto">{item.prices.chat.toLocaleString()}원</span>
                           </div>
                           <div className="flex items-center gap-2 bg-blue-50 px-4 py-3 rounded-lg">
                             <span className="w-3 h-3 rounded-full bg-[#60a5fa]" />
                             <span className="font-semibold">전화</span>
-                            <span className="ml-auto">{item?.cnsl2Price?.toLocaleString()}원</span>
+                            <span className="ml-auto">{item.prices.call.toLocaleString()}원</span>
                           </div>
                           <div className="flex items-center gap-2 bg-orange-50 px-4 py-3 rounded-lg">
                             <span className="w-3 h-3 rounded-full bg-[#fb923c]" />
                             <span className="font-semibold">방문</span>
-                            <span className="ml-auto">{item?.cnsl1Price?.toLocaleString()}원</span>
+                            <span className="ml-auto">{item.prices.visit.toLocaleString()}원</span>
                           </div>
                         </div>
                       </div>
