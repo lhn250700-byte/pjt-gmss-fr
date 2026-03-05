@@ -91,7 +91,7 @@ const AIChat = () => {
       '오늘 있었던 일 중 마음이 무거웠던 순간을 알려주세요.',
       '지금 상황에서 내가 조절할 수 있는 것과 없는 것을 나눠볼까요?',
     ],
-    []
+    [],
   );
 
   const handleSend = (event) => {
@@ -224,9 +224,7 @@ const AIChat = () => {
                   onClick={handleStartChat}
                   disabled={!agreedToTerms}
                   className={`w-full py-4 rounded-xl text-white font-bold text-lg transition-all ${
-                    agreedToTerms
-                      ? 'bg-[#2563eb] hover:bg-[#1d4ed8]'
-                      : 'bg-gray-300 cursor-not-allowed'
+                    agreedToTerms ? 'bg-[#2563eb] hover:bg-[#1d4ed8]' : 'bg-gray-300 cursor-not-allowed'
                   }`}
                 >
                   상담 시작
@@ -237,7 +235,9 @@ const AIChat = () => {
               <div className="w-full space-y-3 text-center">
                 <p className="text-xs text-gray-600">AI 상담 관련 향상 서비스</p>
                 <p className="text-xs text-gray-500">고민, 커리어, 취업 까지 혼자 고민하지 마세요.</p>
-                <p className="text-xs text-gray-500">* 고민순삭의 AI상담은 병원, 정신과적 진료가 아닐뿐더러 행동합니다.</p>
+                <p className="text-xs text-gray-500">
+                  * 고민순삭의 AI상담은 병원, 정신과적 진료가 아닐뿐더러 행동합니다.
+                </p>
                 <p className="text-xs text-gray-500">AI 상담은 참고용으로 제공되며,</p>
                 <p className="text-xs text-gray-500">전문 상담사 개입이 **필요하다고 생각 경우 즉시 바랍니다.</p>
                 <p className="text-xs text-gray-500 mt-4">© 2026 고민순삭 All rights reserved.</p>
@@ -330,9 +330,7 @@ const AIChat = () => {
                 onClick={handleStartChat}
                 disabled={!agreedToTerms}
                 className={`w-full py-4 rounded-xl text-white font-bold text-lg transition-all ${
-                  agreedToTerms
-                    ? 'bg-[#2563eb] hover:bg-[#1d4ed8]'
-                    : 'bg-gray-300 cursor-not-allowed'
+                  agreedToTerms ? 'bg-[#2563eb] hover:bg-[#1d4ed8]' : 'bg-gray-300 cursor-not-allowed'
                 }`}
               >
                 상담 시작
@@ -366,68 +364,68 @@ const AIChat = () => {
 
           {/* CHAT CONTAINER */}
           <div className="w-full max-w-[1400px] h-[800px] bg-white rounded-b-3xl shadow-2xl flex flex-col mx-8 mb-12">
-              {/* CHAT HEADER */}
-              <div className="bg-gradient-to-r from-[#f0fffd] to-[#e6fffe] py-6 px-8 border-b-2 border-[#2ed3c6]/20">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="text-xl font-bold text-gray-800 mb-1">AI와 함께하는 상담</h2>
-                    <p className="text-sm text-gray-600">편안하게 고민을 나눠보세요</p>
-                  </div>
-                  <div className="flex items-center gap-2 px-4 py-2 bg-green-100 rounded-full">
-                    <span className="w-3 h-3 rounded-full bg-green-500 animate-pulse" />
-                    <span className="text-sm font-medium text-green-700">상담 가능</span>
-                  </div>
+            {/* CHAT HEADER */}
+            <div className="bg-gradient-to-r from-[#f0fffd] to-[#e6fffe] py-6 px-8 border-b-2 border-[#2ed3c6]/20">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-bold text-gray-800 mb-1">AI와 함께하는 상담</h2>
+                  <p className="text-sm text-gray-600">편안하게 고민을 나눠보세요</p>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2 bg-green-100 rounded-full">
+                  <span className="w-3 h-3 rounded-full bg-green-500 animate-pulse" />
+                  <span className="text-sm font-medium text-green-700">상담 가능</span>
                 </div>
               </div>
+            </div>
 
-              {/* MESSAGES */}
-              <main className="flex-1 overflow-y-auto px-12 py-8 bg-gradient-to-b from-gray-50 to-white">
-                <div className="flex flex-col gap-6 max-w-[1100px] mx-auto">
-                  {messages.map((message) => (
-                    <div key={message.id} className="flex flex-col gap-2">
-                      <p
-                        className={`text-sm font-medium text-gray-600 ${
-                          message.role === 'ai' ? 'text-left' : 'text-right'
+            {/* MESSAGES */}
+            <main className="flex-1 overflow-y-auto px-12 py-8 bg-gradient-to-b from-gray-50 to-white">
+              <div className="flex flex-col gap-6 max-w-[1100px] mx-auto">
+                {messages.map((message) => (
+                  <div key={message.id} className="flex flex-col gap-2">
+                    <p
+                      className={`text-sm font-medium text-gray-600 ${
+                        message.role === 'ai' ? 'text-left' : 'text-right'
+                      }`}
+                    >
+                      {message.role === 'ai' ? '🤖 AI 상담사' : '👤 나'}
+                    </p>
+                    <div className={`flex ${message.role === 'ai' ? 'justify-start' : 'justify-end'}`}>
+                      <div
+                        className={`max-w-[70%] rounded-2xl px-6 py-4 text-base leading-relaxed shadow-md ${
+                          message.role === 'ai'
+                            ? 'bg-gradient-to-br from-[#f0fffd] to-[#e6fffe] border-2 border-[#2ed3c6]/30 text-[#0f766e]'
+                            : 'bg-gradient-to-br from-[#e9f7ff] to-[#dbeafe] border-2 border-[#2f80ed]/30 text-[#1d4ed8]'
                         }`}
                       >
-                        {message.role === 'ai' ? '🤖 AI 상담사' : '👤 나'}
-                      </p>
-                      <div className={`flex ${message.role === 'ai' ? 'justify-start' : 'justify-end'}`}>
-                        <div
-                          className={`max-w-[70%] rounded-2xl px-6 py-4 text-base leading-relaxed shadow-md ${
-                            message.role === 'ai'
-                              ? 'bg-gradient-to-br from-[#f0fffd] to-[#e6fffe] border-2 border-[#2ed3c6]/30 text-[#0f766e]'
-                              : 'bg-gradient-to-br from-[#e9f7ff] to-[#dbeafe] border-2 border-[#2f80ed]/30 text-[#1d4ed8]'
-                          }`}
-                        >
-                          {message.text}
-                        </div>
+                        {message.text}
                       </div>
                     </div>
-                  ))}
-                  <div ref={endRef} />
-                </div>
-              </main>
+                  </div>
+                ))}
+                <div ref={endRef} />
+              </div>
+            </main>
 
-              {/* INPUT FORM */}
-              <form onSubmit={handleSend} className="px-12 py-6 bg-white border-t-2 border-gray-100 rounded-b-3xl">
-                <div className="flex items-center gap-4 max-w-[1100px] mx-auto">
-                  <input
-                    type="text"
-                    value={input}
-                    onChange={(event) => setInput(event.target.value)}
-                    placeholder="메시지를 입력하세요..."
-                    className="flex-1 h-14 rounded-xl border-2 border-gray-300 px-6 text-base bg-white focus:outline-none focus:border-[#2ed3c6] transition-colors placeholder:text-gray-400"
-                  />
-                  <button
-                    type="submit"
-                    className="h-14 px-10 rounded-xl bg-gradient-to-r from-[#2ed3c6] to-[#26b8ad] text-white text-base font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all"
-                  >
-                    전송
-                  </button>
-                </div>
-                <p className="text-sm text-gray-500 text-center mt-3">AI는 학습 중이며, 답변이 부정확할 수 있습니다.</p>
-              </form>
+            {/* INPUT FORM */}
+            <form onSubmit={handleSend} className="px-12 py-6 bg-white border-t-2 border-gray-100 rounded-b-3xl">
+              <div className="flex items-center gap-4 max-w-[1100px] mx-auto">
+                <input
+                  type="text"
+                  value={input}
+                  onChange={(event) => setInput(event.target.value)}
+                  placeholder="메시지를 입력하세요..."
+                  className="flex-1 h-14 rounded-xl border-2 border-gray-300 px-6 text-base bg-white focus:outline-none focus:border-[#2ed3c6] transition-colors placeholder:text-gray-400"
+                />
+                <button
+                  type="submit"
+                  className="h-14 px-10 rounded-xl bg-gradient-to-r from-[#2ed3c6] to-[#26b8ad] text-white text-base font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all"
+                >
+                  전송
+                </button>
+              </div>
+              <p className="text-sm text-gray-500 text-center mt-3">AI는 학습 중이며, 답변이 부정확할 수 있습니다.</p>
+            </form>
           </div>
         </div>
       </div>

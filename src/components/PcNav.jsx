@@ -9,7 +9,10 @@ const PcNav = () => {
   const location = useLocation();
   const { loginStatus, roleName } = useAuthStore();
 
-  if (roleName === 'USER' || !roleName) {
+  // 로고 이미지
+  const PcLogo = 'https://crrxqwzygpifxmzxszdz.supabase.co/storage/v1/object/public/site_img/h_logo.png';
+
+  if (roleName === 'USER') {
     MENUS.push(
       { label: 'Home', to: '/' },
       { label: '상담', to: '/chat' },
@@ -49,7 +52,7 @@ const PcNav = () => {
                   {isMyPage ? (
                     <NavLink
                       to={to}
-                      className="px-6 py-2.5 bg-white text-[#2563eb] rounded-lg text-[16px] font-black hover:bg-blue-50 transition-all duration-200 shadow-md tracking-tight"
+                      className="px-6 py-2.5 bg-white text-[#2563eb] rounded-lg !text-2xl font-black hover:bg-blue-50 transition-all duration-200 shadow-md tracking-tight"
                       style={{ fontWeight: 900 }}
                     >
                       {label === '로그인' ? '로그인' : '마이페이지로 이동'}
@@ -58,7 +61,7 @@ const PcNav = () => {
                     <NavLink
                       to={to}
                       className={({ isActive }) =>
-                        `text-[17px] font-medium transition-all duration-200 px-1 py-1
+                        `!text-2xl font-medium transition-all duration-200 px-1 py-1
                       ${isActive ? 'text-white font-bold' : 'text-white/90 hover:text-white'}`
                       }
                     >

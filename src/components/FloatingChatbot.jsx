@@ -9,7 +9,7 @@ const FloatingChatbot = () => {
   const [chatHistory, setChatHistory] = useState([]);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [aiStyle, setAiStyle] = useState('empathetic'); // 'realistic' or 'empathetic'
-  
+
   const navigate = useNavigate();
 
   // USER 역할이 아니면 챗봇 표시하지 않음
@@ -34,14 +34,14 @@ const FloatingChatbot = () => {
         links = [
           { label: 'INFO 링크', path: '/info' },
           { label: '이력서 가이드', path: '/info/d_guide' },
-          { label: '자소서 가이드', path: '/info/cover_guide' }
+          { label: '자소서 가이드', path: '/info/cover_guide' },
         ];
         break;
       case 'signup':
         botResponse = '회원가입 페이지로 이동합니다...';
         links = [
           { label: '로그인 페이지 링크', path: '/member/signin' },
-          { label: '회원가입', path: '/member/signup' }
+          { label: '회원가입', path: '/member/signup' },
         ];
         break;
       case 'counseling':
@@ -49,7 +49,7 @@ const FloatingChatbot = () => {
         links = [
           { label: '상담사 페이지 링크', path: '/chat/counselor' },
           { label: 'AI 상담', path: '/chat/withai' },
-          { label: '전화 상담', path: '/chat/counselor' }
+          { label: '전화 상담', path: '/chat/counselor' },
         ];
         break;
       default:
@@ -60,7 +60,7 @@ const FloatingChatbot = () => {
       type: 'bot',
       text: botResponse,
       links: links,
-      timestamp: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })
+      timestamp: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
     };
 
     // 이전 대화 내역을 지우고 새로운 메시지만 표시
@@ -91,7 +91,7 @@ const FloatingChatbot = () => {
     <div className="flex flex-col h-full">
       {/* 헤더 */}
       <div className="flex items-center gap-2 p-4 border-b border-gray-200">
-        <img src="/logo.png" alt="고민순삭" className="w-8 h-8" onError={(e) => e.target.style.display = 'none'} />
+        <img src="/logo.png" alt="고민순삭" className="w-8 h-8" onError={(e) => (e.target.style.display = 'none')} />
         <h2 className="text-lg font-bold text-gray-800">고민순삭 도우미</h2>
       </div>
 
@@ -102,7 +102,12 @@ const FloatingChatbot = () => {
           <div className="flex items-start gap-2 mb-3">
             <div className="w-8 h-8 bg-[#2f80ed] rounded-full flex items-center justify-center flex-shrink-0">
               <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                />
               </svg>
             </div>
             <span className="text-xs font-semibold text-gray-600">고민순삭 도우미</span>
@@ -112,7 +117,7 @@ const FloatingChatbot = () => {
             <br />
             무엇을 도와드릴까요?
           </p>
-          
+
           {/* 버튼들 */}
           <div className="space-y-2">
             <button
@@ -139,30 +144,36 @@ const FloatingChatbot = () => {
 
       {/* 하단 네비게이션 */}
       <div className="flex items-center justify-around p-4 border-t border-gray-200 bg-white rounded-b-3xl">
-        <button
-          onClick={() => setCurrentView('home')}
-          className="flex flex-col items-center gap-1 text-[#2f80ed]"
-        >
+        <button onClick={() => setCurrentView('home')} className="flex flex-col items-center gap-1 text-[#2f80ed]">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+            />
           </svg>
           <span className="text-xs font-medium">홈</span>
         </button>
-        <button
-          onClick={() => setCurrentView('chat')}
-          className="flex flex-col items-center gap-1 text-gray-500"
-        >
+        <button onClick={() => setCurrentView('chat')} className="flex flex-col items-center gap-1 text-gray-500">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+            />
           </svg>
           <span className="text-xs font-medium">채팅</span>
         </button>
-        <button
-          onClick={() => setCurrentView('settings')}
-          className="flex flex-col items-center gap-1 text-gray-500"
-        >
+        <button onClick={() => setCurrentView('settings')} className="flex flex-col items-center gap-1 text-gray-500">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+            />
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
           <span className="text-xs font-medium">설정</span>
@@ -176,7 +187,7 @@ const FloatingChatbot = () => {
     <div className="flex flex-col h-full">
       {/* 헤더 */}
       <div className="flex items-center gap-2 p-4 border-b border-gray-200">
-        <img src="/logo.png" alt="고민순삭" className="w-8 h-8" onError={(e) => e.target.style.display = 'none'} />
+        <img src="/logo.png" alt="고민순삭" className="w-8 h-8" onError={(e) => (e.target.style.display = 'none')} />
         <h2 className="text-lg font-bold text-gray-800">고민순삭 도우미</h2>
       </div>
 
@@ -194,13 +205,18 @@ const FloatingChatbot = () => {
                 <div className="flex items-start gap-2 mb-2">
                   <div className="w-6 h-6 bg-[#2f80ed] rounded-full flex items-center justify-center flex-shrink-0">
                     <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M8 12h.01M12 12h.01M16 12h.01"
+                      />
                     </svg>
                   </div>
                   <span className="text-xs font-semibold text-gray-600">고민순삭 도우미</span>
                 </div>
                 <p className="text-sm text-gray-800 mb-3">{message.text}</p>
-                
+
                 {message.links && message.links.length > 0 && (
                   <div className="space-y-2">
                     {message.links.map((link, linkIndex) => (
@@ -222,30 +238,36 @@ const FloatingChatbot = () => {
 
       {/* 하단 네비게이션 */}
       <div className="flex items-center justify-around p-4 border-t border-gray-200 bg-white rounded-b-3xl">
-        <button
-          onClick={() => setCurrentView('home')}
-          className="flex flex-col items-center gap-1 text-gray-500"
-        >
+        <button onClick={() => setCurrentView('home')} className="flex flex-col items-center gap-1 text-gray-500">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+            />
           </svg>
           <span className="text-xs font-medium">홈</span>
         </button>
-        <button
-          onClick={() => setCurrentView('chat')}
-          className="flex flex-col items-center gap-1 text-[#2f80ed]"
-        >
+        <button onClick={() => setCurrentView('chat')} className="flex flex-col items-center gap-1 text-[#2f80ed]">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+            />
           </svg>
           <span className="text-xs font-medium">채팅</span>
         </button>
-        <button
-          onClick={() => setCurrentView('settings')}
-          className="flex flex-col items-center gap-1 text-gray-500"
-        >
+        <button onClick={() => setCurrentView('settings')} className="flex flex-col items-center gap-1 text-gray-500">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+            />
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
           <span className="text-xs font-medium">설정</span>
@@ -268,7 +290,12 @@ const FloatingChatbot = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
             <span className="text-sm font-medium text-gray-800">대화 내역 초기화</span>
           </div>
@@ -284,7 +311,12 @@ const FloatingChatbot = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+              />
             </svg>
             <span className="text-sm font-medium text-gray-800">알림</span>
           </div>
@@ -306,7 +338,12 @@ const FloatingChatbot = () => {
         <div>
           <div className="flex items-center gap-2 mb-3">
             <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+              />
             </svg>
             <span className="text-sm font-medium text-gray-800">AI 채팅 스타일</span>
           </div>
@@ -353,30 +390,36 @@ const FloatingChatbot = () => {
 
       {/* 하단 네비게이션 */}
       <div className="flex items-center justify-around p-4 border-t border-gray-200 bg-white rounded-b-3xl">
-        <button
-          onClick={() => setCurrentView('home')}
-          className="flex flex-col items-center gap-1 text-gray-500"
-        >
+        <button onClick={() => setCurrentView('home')} className="flex flex-col items-center gap-1 text-gray-500">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+            />
           </svg>
           <span className="text-xs font-medium">홈</span>
         </button>
-        <button
-          onClick={() => setCurrentView('chat')}
-          className="flex flex-col items-center gap-1 text-gray-500"
-        >
+        <button onClick={() => setCurrentView('chat')} className="flex flex-col items-center gap-1 text-gray-500">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+            />
           </svg>
           <span className="text-xs font-medium">채팅</span>
         </button>
-        <button
-          onClick={() => setCurrentView('settings')}
-          className="flex flex-col items-center gap-1 text-[#2f80ed]"
-        >
+        <button onClick={() => setCurrentView('settings')} className="flex flex-col items-center gap-1 text-[#2f80ed]">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+            />
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
           <span className="text-xs font-medium">설정</span>
@@ -388,12 +431,7 @@ const FloatingChatbot = () => {
   return (
     <>
       {/* 오버레이 */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/20 z-40 hidden lg:block"
-          onClick={toggleChatbot}
-        />
-      )}
+      {isOpen && <div className="fixed inset-0 bg-black/20 z-40 hidden lg:block" onClick={toggleChatbot} />}
 
       {/* 챗봇 창 */}
       {isOpen && (
@@ -409,9 +447,7 @@ const FloatingChatbot = () => {
         <button
           onClick={toggleChatbot}
           className={`w-20 h-20 rounded-2xl shadow-2xl flex flex-col items-center justify-center gap-1 transition-all duration-300 ${
-            isOpen
-              ? 'bg-gray-600'
-              : 'bg-[#2f80ed] hover:bg-[#2670d4] hover:scale-105'
+            isOpen ? 'bg-gray-600' : 'bg-[#2f80ed] hover:bg-[#2670d4] hover:scale-105'
           }`}
         >
           {isOpen ? (
@@ -423,7 +459,12 @@ const FloatingChatbot = () => {
             // 홈 아이콘 + 텍스트
             <>
               <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                />
               </svg>
               <span className="text-xs font-medium text-white">홈</span>
             </>
