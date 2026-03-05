@@ -4,71 +4,112 @@ import useAuth from '../../../hooks/useAuth';
 import DashBoard from '../../admin/DashBoard';
 import CounselorDefaultPage from '../../system/info/CounselorDefaultPage';
 import { posts } from '../../user/board/boardData';
-import {
-  getMonthlyPopularPosts,
-  getMonthlyPopularPosts_py,
-  getRealtimePopularPosts,
-  getRecommendedPosts,
-  getWeeklyKeywords,
-  getWeeklyPopularPosts,
-} from '../../../api/bbsApi';
-import { useAuthStore } from '../../../store/auth.store';
+import { refreshToken } from '../../../api/loginApi';
+
+const keywordCloud = [
+  {
+    text: '면접준비',
+    className: '!text-[32px]',
+    style: { top: '20%', left: '8%' },
+  },
+  {
+    text: '자소서',
+    className: '!text-[24px]',
+    style: { top: '15%', right: '15%' },
+  },
+  {
+    text: '취업',
+    className: '!text-[42px]',
+    style: { top: '38%', left: '12%' },
+  },
+  {
+    text: '커리어',
+    className: '!text-[38px]',
+    style: { top: '52%', left: '28%' },
+  },
+  {
+    text: '이직',
+    className: '!text-[22px]',
+    style: { bottom: '25%', left: '8%' },
+  },
+  {
+    text: '직무',
+    className: '!text-[28px]',
+    style: { bottom: '12%', left: '22%' },
+  },
+  {
+    text: '경력',
+    className: '!text-[18px]',
+    style: { bottom: '8%', right: '25%' },
+  },
+  {
+    text: '역량',
+    className: '!text-[20px]',
+    style: { top: '28%', right: '12%' },
+  },
+  {
+    text: '스펙',
+    className: '!text-[18px]',
+    style: { bottom: '35%', right: '8%' },
+  },
+];
+
+const mobileLogo = "https://crrxqwzygpifxmzxszdz.supabase.co/storage/v1/object/public/site_img/h_logo(m).png";
+
+const nomal_cnsl = "https://crrxqwzygpifxmzxszdz.supabase.co/storage/v1/object/public/site_img/nomal_cnsl.png";
+const career_cnsl = "https://crrxqwzygpifxmzxszdz.supabase.co/storage/v1/object/public/site_img/career_cnsl.png";
+const employment_cnsl = "https://crrxqwzygpifxmzxszdz.supabase.co/storage/v1/object/public/site_img/employment_cnsl.png";
+
+const getWithinDays = (iso, days) => {
+  const now = new Date();
+  const created = new Date(iso);
+  const diffMs = now - created;
+  const diffDays = diffMs / (1000 * 60 * 60 * 24);
+  return diffDays <= days;
+};
+
+const scoreRealtime = (p) => p.likes * 2 + p.views * 0.2 + p.comments * 3;
+const scoreRecommend = (p) => p.likes * 3 + p.comments * 5 + p.views * 0.1;
 
 const Home = () => {
   const { user, loading } = useAuth();
-  const { email, accessToken } = useAuthStore();
   const [communityMode, setCommunityMode] = useState('realtime'); // realtime | week | month | recommend
-  const [communityTopPosts, setCommunityTopPosts] = useState([]);
-  const [keywordCloud, setKeywordCloud] = useState([]);
+  const [accessToken, setAccessToken] = useState('');
 
   useEffect(() => {
-    const fetchPopularPosts = async () => {
-      try {
-        let data;
-        if (communityMode === 'realtime')
-          data = await getRealtimePopularPosts(communityMode);
-        else if (communityMode === 'week')
-          data = await getWeeklyPopularPosts(communityMode);
-        else if (communityMode === 'month') {
-          if (accessToken) {
-            data = await getMonthlyPopularPosts_py();
-            data = data?.posts;
-          } else {
-            data = await getMonthlyPopularPosts(communityMode);
-          }
-        } else {
-          if (accessToken) {
-            data = await getRecommendedPosts(email);
-          }
-          setCommunityTopPosts([
-            {
-              bbsId: 1,
-              title: 'title',
-              bbsLikeCount: 1,
-            },
-          ]);
-          return;
-        }
-        console.log('test', data);
-        setCommunityTopPosts(
-          data || [
-            {
-              bbsId: 1,
-              title: 'title',
-              bbsLikeCount: 1,
-            },
-          ],
-        );
-      } catch (error) {}
+    const getToken = async () => {
+      const data = await refreshToken();
+      if (!data) return;
+      else setAccessToken(data?.accessToken);
     };
 
-    const fetchWeeklyKeywords = async () => {
-      const data = await getWeeklyKeywords();
-      setKeywordCloud(data?.keywords);
-    };
+    getToken();
+  }, []);
 
-    fetchPopularPosts();
-    fetchWeeklyKeywords();
+  const communityTopPosts = useMemo(() => {
+    const base = posts.filter((p) => !p.isNotice);
+
+    if (communityMode === 'week') {
+      return base
+        .filter((p) => getWithinDays(p.createdAt, 7))
+        .sort((a, b) => scoreRealtime(b) - scoreRealtime(a))
+        .slice(0, 10);
+    }
+    if (communityMode === 'month') {
+      return base
+        .filter((p) => getWithinDays(p.createdAt, 30))
+        .sort((a, b) => scoreRealtime(b) - scoreRealtime(a))
+        .slice(0, 10);
+    }
+    if (communityMode === 'recommend') {
+      return base
+        .sort((a, b) => scoreRecommend(b) - scoreRecommend(a))
+        .slice(0, 10);
+    }
+
+    return base
+      .sort((a, b) => scoreRealtime(b) - scoreRealtime(a))
+      .slice(0, 10);
   }, [communityMode]);
 
   // TODO: DB 연동 시 실제 공지글 가져오기
@@ -95,7 +136,7 @@ const Home = () => {
     );
   }
 
-  if (user.role === 'ADMIN') return null;
+  if (user.role === 'ADMIN') return <DashBoard />;
   else if (user.role === 'USER')
     return (
       <div className="w-full">
@@ -103,10 +144,11 @@ const Home = () => {
         <div className="lg:hidden w-full max-w-[390px] min-h-screen mx-auto bg-[#f3f7ff] pb-[24px]">
           <header className="bg-[#2a5eea] h-16 flex items-center justify-center">
             <div className="flex items-center gap-2 text-white font-bold text-lg">
-              <span className="text-lg leading-none" aria-hidden="true">
+              {/* <span className="text-lg leading-none" aria-hidden="true">
                 ★
               </span>
-              <span>고민순삭</span>
+              <span>고민순삭</span> */}
+              <img src={mobileLogo} alt="로고" style={{width: '60px', height: 'auto'}}/>
             </div>
           </header>
 
@@ -196,7 +238,7 @@ const Home = () => {
               <div className="relative h-[210px] bg-white rounded-[14px] shadow-[0_10px_20px_rgba(31,41,55,0.08)] overflow-hidden">
                 {keywordCloud.map((item) => (
                   <span
-                    key={item.keyword}
+                    key={item.text}
                     className={`absolute text-[#2f80ed] font-bold opacity-75 ${item.className}`}
                     style={item.style}
                   >
@@ -248,18 +290,15 @@ const Home = () => {
                 </button>
               </div>
               <ol className="list-none p-0 m-0 flex flex-col gap-2">
-                {communityTopPosts?.map((p, index) => (
+                {communityTopPosts.map((p, index) => (
                   <li
-                    key={p.bbsId || p.bbs_id}
+                    key={p.id}
                     className="flex items-center gap-2.5 text-[13px] text-[#1f2937]"
                   >
                     <span className="font-bold text-[#4b5563] w-[26px]">
                       {String(index + 1).padStart(2, '0')}
                     </span>
-                    <Link
-                      to={`/board/view/${p.bbsId || p.bbs_id}`}
-                      className="truncate"
-                    >
+                    <Link to={`/board/view/${p.id}`} className="truncate">
                       {p.title}
                     </Link>
                   </li>
@@ -274,14 +313,14 @@ const Home = () => {
           <div className="max-w-[1520px] mx-auto px-6 py-8">
             {/* HERO */}
             <section
-              className="h-[220px] rounded-[20px] text-white p-8 flex items-end shadow-[0_8px_24px_rgba(0,0,0,0.12)] bg-cover bg-center mb-8"
+              className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen h-[380px] text-white p-8 flex items-center justify-center text-center shadow-[0_8px_24px_rgba(0,0,0,0.12)] bg-cover bg-center mb-8"
               style={{
                 backgroundImage:
-                  "linear-gradient(0deg, rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80')",
+                  "linear-gradient(0deg, rgba(0,0,0,0.75)), url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80')",
               }}
             >
               <div>
-                <p className="text-[18px] leading-[1.5] font-semibold mb-1">
+                <p className="!text-5xl leading-[1.5] !font-semibold mb-5">
                   우리를 망치는 것은 다른 사람들의 눈을 지나치게 의식하는
                   것이다.
                 </p>
@@ -292,8 +331,8 @@ const Home = () => {
             </section>
 
             {/* QUICK TEST */}
-            <section className="mb-8">
-              <h3 className="text-[20px] font-bold text-[#111827] mb-4">
+            <section className="my-10">
+              <h3 className="!text-4xl !font-semibold text-[#111827] mb-8">
                 내 취업 간단 테스트
               </h3>
               <div className="grid grid-cols-3 gap-4">
@@ -320,10 +359,10 @@ const Home = () => {
                         테스트
                       </span>
                     </div>
-                    <p className="text-[15px] font-bold text-[#111827] mb-2">
+                    <p className="!text-2xl !font-medium text-[#111827] mb-2">
                       {t.title}
                     </p>
-                    <p className="text-[12px] text-[#6b7280] leading-relaxed">
+                    <p className="!text-xl text-[#6b7280] leading-relaxed">
                       {t.desc}
                     </p>
                   </div>
@@ -333,8 +372,8 @@ const Home = () => {
 
             {/* MAIN CTA */}
             {/* TODO: DB 연동 시 각 버튼의 링크를 실제 상담 서비스로 연결 */}
-            <section className="mb-8">
-              <h3 className="text-[20px] font-bold text-[#111827] mb-4">
+            <section className="my-10">
+              <h3 className="!text-4xl !font-semibold text-[#111827] mb-8">
                 지금 나에게 필요한 상담은 무엇인가요?
               </h3>
               <div className="grid grid-cols-3 gap-5">
@@ -343,11 +382,11 @@ const Home = () => {
                   to="/chat/withai"
                   className="bg-gradient-to-br from-[#2ed3c6] to-[#26b8ad] rounded-[20px] p-8 text-white shadow-[0_8px_24px_rgba(46,211,198,0.25)] hover:shadow-[0_12px_32px_rgba(46,211,198,0.35)] hover:scale-[1.02] transition-all duration-300 flex flex-col items-center justify-center text-center min-h-[200px]"
                 >
-                  <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center text-[52px] mb-4">
-                    💬
+                  <div className="w-32 h-32 rounded-full bg-white/20 flex items-center justify-center text-[52px] mb-4">
+                    <img src={nomal_cnsl} alt="고민 상담" />
                   </div>
-                  <p className="text-[26px] font-bold mb-2">고민 상담</p>
-                  <p className="text-[14px] opacity-95 leading-relaxed">
+                  <p className="!text-2xl !font-semibold mb-2">고민 상담</p>
+                  <p className="!text-xl opacity-95 leading-relaxed">
                     혼자서 풀지 못하던 고민,
                     <br />
                     지금 마음부터 가볍게 정리해보세요.
@@ -359,11 +398,11 @@ const Home = () => {
                   to="/chat/counselor?category=career"
                   className="bg-gradient-to-br from-[#4f9bff] to-[#2f80ed] rounded-[20px] p-8 text-white shadow-[0_8px_24px_rgba(47,128,237,0.25)] hover:shadow-[0_12px_32px_rgba(47,128,237,0.35)] hover:scale-[1.02] transition-all duration-300 flex flex-col items-center justify-center text-center min-h-[200px]"
                 >
-                  <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center text-[52px] mb-4">
-                    💼
+                  <div className="w-32 h-32 rounded-full bg-white/20 flex items-center justify-center text-[52px] mb-4">
+                    <img src={career_cnsl} alt="커리어 상담" />
                   </div>
-                  <p className="text-[26px] font-bold mb-2">커리어 상담</p>
-                  <p className="text-[14px] opacity-95 leading-relaxed">
+                  <p className="!text-2xl !font-semibold mb-2">커리어 상담</p>
+                  <p className="!text-xl opacity-95 leading-relaxed">
                     지금의 선택이 맞는지,
                     <br />
                     커리어 방향을 함께 점검해드려요.
@@ -375,11 +414,11 @@ const Home = () => {
                   to="/chat/counselor?category=job"
                   className="bg-gradient-to-br from-[#2563eb] to-[#1e40af] rounded-[20px] p-8 text-white shadow-[0_8px_24px_rgba(37,99,235,0.25)] hover:shadow-[0_12px_32px_rgba(37,99,235,0.35)] hover:scale-[1.02] transition-all duration-300 flex flex-col items-center justify-center text-center min-h-[200px]"
                 >
-                  <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center text-[52px] mb-4">
-                    📝
+                  <div className="w-32 h-32 rounded-full bg-white/20 flex items-center justify-center text-[52px] mb-4">
+                    <img src={employment_cnsl} alt="취업 상담" />
                   </div>
-                  <p className="text-[26px] font-bold mb-2">취업 상담</p>
-                  <p className="text-[14px] opacity-95 leading-relaxed">
+                  <p className="!text-2xl !font-semibold mb-2">취업 상담</p>
+                  <p className="!text-xl opacity-95 leading-relaxed">
                     이력서부터 면접까지,
                     <br />
                     합격에 필요한 전략을 전해드립니다.
@@ -390,39 +429,47 @@ const Home = () => {
 
             {/* KEYWORDS */}
             <section className="mb-8">
-              <h3 className="text-[20px] font-bold text-[#111827] mb-4">
+              <h3 className="!text-4xl !font-bold text-[#111827] mb-4">
                 이번 주 키워드
               </h3>
               <div className="grid grid-cols-2 gap-5">
                 <div className="relative bg-white rounded-[20px] shadow-[0_4px_16px_rgba(31,41,55,0.06)] overflow-hidden p-6 h-full min-h-[320px]">
-                  <img
-                    src="http://localhost:8000/weekly-wordcloud"
-                    className="mt-4"
-                  />
+                  {keywordCloud.map((item) => (
+                    <span
+                      key={item.text}
+                      className={`absolute text-[#2f80ed] font-bold opacity-80 ${item.className}`}
+                      style={item.style}
+                    >
+                      {item.text}
+                    </span>
+                  ))}
                 </div>
                 <div className="bg-white rounded-[20px] shadow-[0_4px_16px_rgba(31,41,55,0.06)] p-5">
                   <div className="flex items-center justify-between mb-4">
-                    <p className="text-[16px] font-bold text-[#111827]">
+                    <p className="!text-3xl !font-semibold text-[#111827]">
                       상위 키워드 TOP 10
                     </p>
-                    <p className="text-[12px] text-[#6b7280]">이번 주</p>
+                    <p className="!text-base text-[#6b7280]">이번 주</p>
                   </div>
                   <ol className="space-y-2.5">
                     {[...keywordCloud]
-                      .map((k) => k.keyword)
+                      .map((k) => k.text)
                       .slice(0, 9)
                       .concat(['포트폴리오'])
                       .slice(0, 10)
                       .map((t, idx) => (
                         <li
                           key={`${t}-${idx}`}
-                          className="flex items-center gap-3 text-[13px]"
+                          className="flex items-center gap-3 !text-[18px]"
                         >
                           <span className="w-7 text-right font-bold text-[#4b5563]">
                             {String(idx + 1).padStart(2, '0')}
                           </span>
-                          <span className="flex-1 text-[#111827] font-medium">
+                          <span className="flex-1 text-[#111827] !font-medium">
                             {t}
+                          </span>
+                          <span className="text-[#6b7280] !text-[12px] font-semibold">
+                            {(100 - idx * 8).toFixed(0)}%
                           </span>
                         </li>
                       ))}
@@ -524,20 +571,20 @@ const Home = () => {
                 <ol className="list-none p-0 m-0 flex flex-col gap-2.5">
                   {communityTopPosts.map((p, index) => (
                     <li
-                      key={p.bbsId || p.bbs_id}
+                      key={p.id}
                       className="flex items-center gap-3 text-[13px] text-[#1f2937]"
                     >
                       <span className="font-bold text-[#4b5563] w-[28px] text-center">
                         {String(index + 1).padStart(2, '0')}
                       </span>
                       <Link
-                        to={`/board/view/${p.bbsId || p.bbs_id}`}
+                        to={`/board/view/${p.id}`}
                         className="flex-1 truncate hover:text-[#2f80ed] font-medium transition-colors"
                       >
                         {p.title}
                       </Link>
                       <span className="text-[11px] text-[#6b7280]">
-                        👍 {p.bbsLikeCount}
+                        👍 {p.likes}
                       </span>
                     </li>
                   ))}
